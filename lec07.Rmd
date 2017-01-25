@@ -29,9 +29,9 @@ which completely decribes the distribution of $X$.
 
 CDFs are nice because *all* random variables have one, but they aren't the most natural representations of distributions.
 
-For a discrete random variable $X$, the function that maps the individual outcomes to their probabilities is more natural.
+For a discrete random variable $X$, the function that maps the  \textit{individual possible values} to their probabilities is more natural.
 
-\pause Example: Let $X$ be the number of tosses of a coin until the first `H` appears. This function maps individual outcomes to probabilities:
+\pause Example: Let $X$ be the number of tosses of a coin until the first `H` appears. This function maps individual possible values to probabilities:
 $$p(x) = f(x) = P(X=x) = \left(\frac{1}{2}\right)^x, \quad x \in \{1,2,3,\ldots\}$$
 
 \pause Such a function is (best) called a *probability mass function* or pmf. I tend to use $p(x)$ notation for pmfs.
