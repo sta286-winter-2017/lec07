@@ -1,0 +1,201 @@
+---
+title: "STA286 Lecture 07"
+author: "Neil Montgomery"
+date: "Last edited: `r format(Sys.time(), '%Y-%m-%d %H:%M')`"
+output: 
+  beamer_presentation:
+    keep_tex: TRUE
+    incremental: TRUE
+    df_print: tibble
+    fig_caption: FALSE
+classoption: aspectratio=169
+header-includes:
+- \renewcommand{\le}{\leqslant}
+- \renewcommand{\ge}{\geqslant}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+options(tibble.width=70)
+```
+
+## cumulative distribution functions
+
+Recall the cdf:
+$$F(x) = P(X \le x),$$
+which completely decribes the distribution of $X$. 
+
+## discrete random variables
+
+CDFs are nice because *all* random variables have one, but they aren't the most natural representations of distributions.
+
+For a discrete random variable $X$, the function that maps the individual outcomes to their probabilities is more natural.
+
+\pause Example: Let $X$ be the number of tosses of a coin until the first `H` appears. This function maps individual outcomes to probabilities:
+$$p(x) = f(x) = P(X=x) = \left(\frac{1}{2}\right)^x, \quad x \in \{1,2,3,\ldots\}$$
+
+\pause Such a function is (best) called a *probability mass function* or pmf. I tend to use $p(x)$ notation for pmfs.
+
+\pause Textbook notes: the book uses $f(x)$ notation, which I dislike. It also gives the following (terrible) synonyms:
+
+* "probability function" (name already taken by $P$!)
+
+* "probability distribution" (name already being used for a fundamental concept!)
+
+## more pmf examples
+
+**See if a product is defective:** A factory makes a defective item with probability $p$. Select an item at random from a factory. Let $X=1$ if the item is defective, and let $X=0$ otherwise. 
+
+\pause The pmf of $X$ is:
+$$p(x) = P(X = x) = \begin{cases}
+p &: x=1\\
+1-p &: x=0
+\end{cases}$$
+
+\pause More compact version: $p(x) = p^x(1-p)^{1-x}$
+
+## defining properties of pmf
+
+A function $p(x)$ is a pmf if and only if:
+
+1. $$p(x) \ge 0$$
+2. $$\sum\limits_{\{x\,|\,P(X=x) > 0\}} p(x) = 1$$
+
+## checking if a function is a valid pmf
+
+I said this function is a pmf. Is it?
+$$p(x) = f(x) = P(X=x) = \left(\frac{1}{2}\right)^x, \quad x \in \{1,2,3,\ldots\}$$
+
+Verify:
+
+1. $p(x) \ge 0$
+
+2. Fact: $\sum\limits_{x=0}^\infty ar^x = \frac{a}{1-r}$ for $0 < r < 1$. So:
+$$\sum\limits_{x=1}^\infty \left(\frac{1}{2}\right)^x = \sum\limits_{x=0}^\infty \frac{1}{2}\left(\frac{1}{2}\right)^x = 1$$
+
+## a pmf completely characterizes a discrete distribution
+
+I told you a cdf completely characterizes any distribution, which is a fact you'll have to take on buffy. 
+
+\pause A discrete random variable has a pmf. Does the pmf characterize the distribtuion? 
+
+\pause Yes, because you can compute a cdf from a pdf and vice versa. "Obviously:"
+$$F(x) = \sum\limits_{y\le x} p(y)$$
+For the reverse direction you take the jump points of the cdf and determine the magnitude of the jump.
+
+## possibly easier to see than to understand the formal statement
+
+The cdf of $X=$ "toss to first H", with pmf values in blue:
+
+```{r, warning=FALSE, message=FALSE}
+source("cdf.R")
+p <- plot_cdf(data_frame(x=1:6, y=(0.5)^(1:6)))
+
+p + 
+  geom_segment(data=data_frame(x=1:6, y=1-0.5^(0:5), xend=1:6,yend=1-(0.5)^(1:6)),
+               mapping=aes(x=x, y=y,
+                           xend=xend,yend=yend), colour="blue", size=1.5, alpha=0.5) +
+  annotate("text", x=1:4-0.5 , y=(1-0.5^(1:4) - 0.5^(1:4)/2), label=sprintf("P(X=%d)", 1:4), color="blue")
+  
+```
+
+## continuous random variables
+
+For a random process taking on values in real intervals, we saw it made sense for $P(X=x) = 0$ for any particular value of $x$ (e.g. bus stop example.)
+
+That condition could be taken as a definition of "continuous random variable". 
+
+\pause We're mainly concerned with probabilities like $P(a < X \le b)$, which could be calculated using $F(b) - F(a)$, but there's another way.
+
+\pause If there is a ("Riemann integrable") function $f$ such that:
+
+$$P(a < X \le b) = F(b) - F(a) = \int\limits_a^b f(x)\,dx$$
+then we say $X$ is "(absolutely) continuous" and has $f$ as its *probability density function* (or pdf, or just density). 
+
+Note: $a$ and $b$ can be $-\infty$ or $\infty$. 
+
+## example - bus stop
+
+The bus comes every 10 minutes and you arrive at random "uniformly". $X$ is the waiting time for the bus.
+
+\pause Let:
+$$f(x) = \begin{cases}
+\frac{1}{10} &: 0 < x < 10\\
+0 &: \text{otherwise}
+\end{cases}$$
+
+\pause This density gives us all the probabilities such as:
+$$P(2 < X \le 4) = \int\limits_2^4 \frac{1}{10}\,dx = \frac{2}{10} \qquad \qquad P(X=2)=\int\limits_2^2 \frac{1}{10}\,dx = 0$$
+
+## a density completely characterizes a distribution
+
+Since:
+$$F(x) = \int\limits_{-\infty}^x f(u)\,du$$
+one gets $F^\prime(x) = f(x)$, so $F$ and $f$ contain equivalent information.
+
+\pause Defining characteristics: A function $f$ is a density as long as $f \ge 0$ and $\int\limits_{-\infty}^\infty f(x)\,dx = 1$.
+
+## another density example
+
+Consider:
+$$f(x) = \begin{cases}
+e^{-x} &: x > 0\\
+0      &: x \le 0
+\end{cases}$$
+\pause It satisfies the requirements to be a density, since $f\ge 0$ and:
+$$\int\limits_{-\infty}^\infty f(x)\,dx \onslide<1->{= \int\limits_0^\infty e^{-x}\,dx} \onslide<2->{= \left[-e^{-x}\right]_0^\infty} \onslide<3->{=1}$$
+
+\pause Suppose $X$ has this density. Calculate $P(X > 1)$ and determine the cdf of $X$...
+
+## density - meaning and interpretation
+
+Advice: *Always* think of a density as living inside its integral.
+
+\pause Heuristic meaning of $f(x)$ can be: 
+$$f(x)\Delta{x} \approx \int_x^{x+\Delta{x}}f(x)\,dx = P(X \in (x, x+\Delta x]).$$
+
+\pause Pictures of densities can be useful, to show relative differences in probabilities. 
+
+## illustration using $e^{-x}$ density
+
+```{r}
+d_exp <- data_frame(x=seq(0,4,length.out = 20)) %>% mutate("f(x)" = exp(-x))
+d_exp %>% 
+  ggplot(aes(x=x, y=`f(x)`)) + geom_line() + 
+  geom_segment(x=-1.6, y=0, xend=0, yend=0)
+```
+
+## histogram as "density estimator"
+
+A density can be thought of as the "limit of histograms".
+
+```{r, warning=FALSE}
+source("multiplot.R")
+exp_dens <- geom_line(aes(x=x,y=y), data_frame(x=0:50/10, y=exp(-(0:50/10))), color="red")
+p_1000 <- data_frame(x=rexp(1000)) %>% 
+  ggplot(aes(x=x, y=..density..)) + geom_histogram(bins = 50, boundary=0) + xlim(0,5) + ggtitle("n=1000") + exp_dens
+p_100000 <- data_frame(x=rexp(100000)) %>% 
+  ggplot(aes(x=x,y=..density..)) + geom_histogram(bins = 100, boundary=0) + xlim(0,5) + ggtitle("n=100000") + exp_dens
+multiplot(p_1000, p_100000, cols = 2)
+```
+
+## a note on "identically distributed"
+
+The distribution is all we care about.
+
+So if $X_1$ and $X_2$ have the same distributions, they are effectively the same (even if they are not the same functions.)
+
+\pause For example, roll a fair die so that $S = \{1,2,3,4,5,6\}.$ 
+
+\pause Define:
+$$X_1 = \begin{cases}
+1 &: 3 \text{ or } 4 \text{ appears }\\
+0 &: \text{otherwise}
+\end{cases} \qquad \text{and} \qquad X_2 = \begin{cases}
+1 &: 5 \text{ or } 6 \text{ appears }\\
+0 &: \text{otherwise}
+\end{cases}$$
+
+\pause $X_1$ and $X_2$ are not the same functions. But the have the same p.m.f.:
+$$p(x) = \left(\frac{1}{3}\right)^x\left(\frac{2}{3}\right)^{1-x},\ x\in\{0,1\}.$$
+We say $X_1$ and $X_2$ are *identically distributed*.
