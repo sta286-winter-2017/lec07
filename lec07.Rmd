@@ -99,6 +99,11 @@ p +
   
 ```
 
+## enormous cat
+
+![alt text](dog.jpg)
+
+
 ## continuous random variables
 
 For a random process taking on values in real intervals, we saw it made sense for $P(X=x) = 0$ for any particular value of $x$ (e.g. bus stop example.)
@@ -199,3 +204,5 @@ $$X_1 = \begin{cases}
 \pause $X_1$ and $X_2$ are not the same functions. But the have the same p.m.f.:
 $$p(x) = \left(\frac{1}{3}\right)^x\left(\frac{2}{3}\right)^{1-x},\ x\in\{0,1\}.$$
 We say $X_1$ and $X_2$ are *identically distributed*.
+
+
